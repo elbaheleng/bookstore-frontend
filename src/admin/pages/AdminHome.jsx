@@ -46,6 +46,7 @@ function AdminHome() {
           </div>
         </div>
       </div>
+      <ToastContainer theme='colored' position='top-center' autoClose={2000} />
       <Footer />
     </>
   )

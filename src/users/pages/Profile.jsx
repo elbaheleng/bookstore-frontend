@@ -44,7 +44,7 @@ function Profile() {
   }
   const handleSubmit = async () => {
     const { title, author, noofpages, imageurl, price, dprice, abstract, publisher, language, isbn, category, uploadedImages } = bookDetails
-    if (!title || !author || !noofpages || !imageurl || !price || !dprice || !abstract || !publisher || !language || !isbn || !category || !uploadedImages.length == 0) {
+    if (!title || !author || !noofpages || !imageurl || !price || !dprice || !abstract || !publisher || !language || !isbn || !category || uploadedImages.length == 0) {
       toast.info("Pls fill the fields completely")
     }
     else {
@@ -52,7 +52,7 @@ function Profile() {
         "Authorization": `Bearer ${token}`
       }
       const reqBody = new FormData()
-      for (key in bookDetails){
+      for (let key in bookDetails){
         if (key != 'uploadedImages'){
         reqBody.append(key, bookDetails[key])
         } else {
@@ -63,6 +63,17 @@ function Profile() {
       }
       const result = await uploadBookApi(reqBody,reqHeader)
       console.log(result);
+      if(result.status == 200){
+        toast.success("Book added successfully")
+        handleReset()
+      } 
+      else if(result.status == 401){
+        toast.warning(result.response.data)
+        handleReset()
+      } else {
+        toast.error("Something went wrong")
+        handleReset()
+      }
       
     }
   }

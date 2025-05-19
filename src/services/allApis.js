@@ -16,12 +16,37 @@ export const loginApi = async (reqBody) =>{
 export const googleLoginApi = async (reqBody) =>{
     return await commonApi('POST', `${serverurl}/google-login`,reqBody)
 }
+//get home book
+export const homeBookApi = async() =>{
+    return await commonApi('GET', `${serverurl}/all-home-book`)
+}
 //--------------------------------------------------------------
 //user api
 
 //upload a book
 export const uploadBookApi = async (reqBody,reqHeader) =>{
         return await commonApi('POST', `${serverurl}/add-book`,reqBody, reqHeader)
-
 }
 
+//get all books
+export const getAllBookApi = async(searchKey, reqHeader) =>{
+    //query parameter baseurl?key=value
+    return await commonApi('GET',`${serverurl}/all-books?search=${searchKey}`,'',reqHeader)
+}
+
+//to view a book
+export const viewABookApi = async(id) =>{
+    return await commonApi('GET',`${serverurl}/view-book/${id}`)
+}
+
+//--------------------------------------------------------------
+//admin api
+
+//get all books for admin
+export const getAllBookAdminApi = async(reqHeader) =>{
+    return await commonApi('GET',`${serverurl}/admin-all-books`,'',reqHeader)
+}
+//api to approve a book
+export const approveBookApi = async(reqBody, reqHeader) =>{
+    return await commonApi('PUT',`${serverurl}/approve-book`,reqBody,reqHeader)
+}

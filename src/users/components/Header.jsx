@@ -47,7 +47,7 @@ function Header() {
 
                         {dropdownStatus && <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                             <div className="py-1" role="none">
-                                <Link to={'/profile'}><p className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0"><FontAwesomeIcon className='me-2' icon={faAddressCard} />Profile</p></Link>
+                                <Link to={'/profile'}><p className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="menu-item-0"><FontAwesomeIcon className='me-2' icon={faAddressCard} />Profile</p></Link>
                                 <button className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-1"><FontAwesomeIcon className='me-2' icon={faPowerOff} />Logout</button>
                             </div>
                         </div>}

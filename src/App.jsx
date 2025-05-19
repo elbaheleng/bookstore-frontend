@@ -14,6 +14,7 @@ import AdminHome from './admin/pages/AdminHome'
 import AdminBooks from './admin/pages/AdminBooks'
 import AdminCareers from './admin/pages/AdminCareers'
 import AdminSettings from './admin/pages/AdminSettings'
+import Viewbook from './users/pages/Viewbook'
 
 function App() {
   const [isloading, setIsLoading] = useState(false)
@@ -34,6 +35,7 @@ function App() {
       <Route path='/login' element={<Auth/>}/>
       <Route path='/register' element={<Auth register/>}/>
       <Route path='/all-Books' element={<AllBooks/>}/>
+      <Route path='/view-book/:id' element={<Viewbook/>}/>
       <Route path='/careers' element={<Careers/>}/>
       <Route path='/contact' element={<Contact/>}/>
       <Route path='/profile' element={<Profile/>}/>
