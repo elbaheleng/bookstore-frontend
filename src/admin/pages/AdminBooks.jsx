@@ -4,7 +4,7 @@ import HeaderAdmin from '../components/HeaderAdmin'
 import SidebarAdmin from '../components/SidebarAdmin'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
-import { approveBookApi, getAllBookAdminApi } from '../../services/allApis'
+import { approveBookApi, getAllBookAdminApi, getAllUsersApi } from '../../services/allApis'
 import { toast } from 'react-toastify'
 
 function AdminBooks() {
@@ -13,6 +13,8 @@ function AdminBooks() {
   const [bookDetails, setBookDetails] = useState([])
   const [token, setToken] = useState("")
   const [approveStatus, setApproveStatus] = useState(false)
+  const [allUsersDetails, setAllUserDetails] = useState([])
+
 
   const getAllBooksAdmin = async (token) => {
     const reqHeader = {
@@ -39,13 +41,30 @@ function AdminBooks() {
     }
   }
 
+  const getAllUsers = async () =>{
+    const reqHeader = {
+      "Authorization": `Bearer ${token}`
+    }
+    const result = await getAllUsersApi(reqHeader)
+    //console.log(result); 
+    if(result.status == 200){
+      setAllUserDetails(result.data)
+    }
+  }
+
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
       const token = sessionStorage.getItem("token")
       setToken(token)
+      if (bookliststatus == true){
       getAllBooksAdmin(token)
+      } else if (usersstatus == true){
+        getAllUsers(token)
+      } else {
+        console.log('Something went wrong');
+      }
     }
-  }, [approveStatus])
+  }, [approveStatus, usersstatus])
   return (
     <>
       <HeaderAdmin />
@@ -83,80 +102,23 @@ function AdminBooks() {
 
           {usersstatus &&
             <div className='md:grid grid-cols-3 gap-5 mx-10'>
-              <div className='bg-gray-300 rounded p-3 mb-5'>
-                <p className='text-red-600 mb-2'>ID: 6adn9skfjbkjn788nlkwdsn</p>
-                <div className='flex gap-5'>
-                  <div>
-                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="no image" style={{ height: "50px" }} />
-                  </div>
-                  <div className='ms-3'>
-                    <h3 className='text-blue-600 text-xl'>Jennifer Steve</h3>
-                    <p>jennifer@gmail.com</p>
-                  </div>
-                </div>
-              </div>
-              <div className='bg-gray-300 rounded p-3 mb-5'>
-                <p className='text-red-600 mb-2'>ID: 6adn9skfjbkjn788nlkwdsn</p>
-                <div className='flex gap-5'>
-                  <div>
-                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="no image" style={{ height: "50px" }} />
-                  </div>
-                  <div className='ms-3'>
-                    <h3 className='text-blue-600 text-xl'>Jennifer Steve</h3>
-                    <p>jennifer@gmail.com</p>
-                  </div>
-                </div>
-              </div>
-              <div className='bg-gray-300 rounded p-3 mb-5'>
-                <p className='text-red-600 mb-2'>ID: 6adn9skfjbkjn788nlkwdsn</p>
-                <div className='flex gap-5'>
-                  <div>
-                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="no image" style={{ height: "50px" }} />
-                  </div>
-                  <div className='ms-3'>
-                    <h3 className='text-blue-600 text-xl'>Jennifer Steve</h3>
-                    <p>jennifer@gmail.com</p>
-                  </div>
-                </div>
-              </div>
-              <div className='bg-gray-300 rounded p-3 mb-5'>
-                <p className='text-red-600 mb-2'>ID: 6adn9skfjbkjn788nlkwdsn</p>
-                <div className='flex gap-5'>
-                  <div>
-                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="no image" style={{ height: "50px" }} />
-                  </div>
-                  <div className='ms-3'>
-                    <h3 className='text-blue-600 text-xl'>Jennifer Steve</h3>
-                    <p>jennifer@gmail.com</p>
-                  </div>
-                </div>
-              </div>
-              <div className='bg-gray-300 rounded p-3 mb-5'>
-                <p className='text-red-600 mb-2'>ID: 6adn9skfjbkjn788nlkwdsn</p>
-                <div className='flex gap-5'>
-                  <div>
-                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="no image" style={{ height: "50px" }} />
-                  </div>
-                  <div className='ms-3'>
-                    <h3 className='text-blue-600 text-xl'>Jennifer Steve</h3>
-                    <p>jennifer@gmail.com</p>
-                  </div>
-                </div>
-              </div>
-              <div className='bg-gray-300 rounded p-3 mb-5'>
-                <p className='text-red-600 mb-2'>ID: 6adn9skfjbkjn788nlkwdsn</p>
-                <div className='flex gap-5'>
-                  <div>
-                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="no image" style={{ height: "50px" }} />
-                  </div>
-                  <div className='ms-3'>
-                    <h3 className='text-blue-600 text-xl'>Jennifer Steve</h3>
-                    <p>jennifer@gmail.com</p>
-                  </div>
-                </div>
-              </div>
 
 
+
+              { allUsersDetails?.length>0 ? allUsersDetails?.map((item,index)=>(<div className='bg-gray-300 rounded p-3 mb-5'>
+                <p className='text-red-600 mb-2' key={index}>ID: {item?._id}</p>
+                <div className='flex gap-5'>
+                  <div>
+                    <img src={item?.profile == ""?"https://cdn-icons-png.freepik.com/512/8742/8742495.png":`${item?.profile}`} alt="no image" style={{ height: "50px", borderRadius:'50%' }} />
+                  </div>
+                  <div className='ms-3'>
+                    <h3 className='text-blue-600 text-xl'>{item?.username}</h3>
+                    <p>{item?.email}</p>
+                  </div>
+                </div>
+              </div>)) : 
+              <p>No Users</p>
+              }
             </div>}
 
         </div>
