@@ -1,11 +1,27 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot, faSquareArrowUpRight, faSquareXmark } from '@fortawesome/free-solid-svg-icons'
+import { getAllJobsApi } from '../../services/allApis'
 
 function Careers() {
     const [modalStatus,setModalStatus] = useState(false)
+    const [allJobs, setAllJobs] = useState([])
+        const [searchKey, setSearchKey] = useState("")
+
+    const getAllJobs = async(searchKey)=>{
+        const result = await getAllJobsApi(searchKey)
+        //console.log(result);
+        if(result.status==200){
+            setAllJobs(result.data)
+        }
+    }
+    console.log(allJobs);
+    
+    useEffect(()=>{
+        getAllJobs(searchKey)
+    },[searchKey])
     return (
         <>
             <Header />
@@ -17,23 +33,25 @@ function Careers() {
             <div className='md:px-20 p-5 '>
                 <h1 className='text-2xl'>Current Openings</h1>
                 <div className='flex justify-center items-center m-5'>
-                    <input placeholder='Job Title' className='border border-gray-400 px-5 py-2 w-96 placeholder-gray-400' type="text" />
+                    <input placeholder='Job Title' value={searchKey} onChange={(e) => setSearchKey(e.target.value)} className='border border-gray-400 px-5 py-2 w-96 placeholder-gray-400' type="text" />
                     <button className='bg-green-800 text-white px-5 py-2 border border-green-800 hover:bg-white hover:text-green-800'>Search</button>
                 </div>
             </div>
 
             <div className='md:px-20 py-5 p-5'>
-                <div className='shadow border border-gray-500'>
+                {allJobs?.length>0 ? 
+                allJobs?.map((item,index)=>(
+                    <div className='shadow border border-gray-500 mt-4'key={index}>
                     <div className="md:grid grid-cols-[8fr_1fr] p-5">
                         <div>
-                            <h1 className='mb-3'>Job Title</h1>
+                            <h1 className='mb-3'>{item?.title}</h1>
                             <hr />
-                            <p className='mt-3'><FontAwesomeIcon icon={faLocationDot} className='text-blue-600 me-3' />Kochi</p>
-                            <p className='mt-3'> Job Type:</p>
-                            <p className='mt-3'> Salary:</p>
-                            <p className='mt-3'> Qualification:</p>
-                            <p className='mt-3'> Experience:</p>
-                            <p className='text-justify'>Description : Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur inventore quas in ad quidem aperiam nesciunt laborum incidunt itaque aliquid maxime blanditiis sequi, sed suscipit dolores illo reiciendis doloribus quod.Aliquam rem in, omnis voluptas aut nihil placeat autem dolores dignissimos reprehenderit atque velit, similique veritatis fugit quod? Rerum eligendi beatae dicta eos, molestiae omnis accusantium repellendus reiciendis iure! Voluptatem? At, nulla temporibus! Cum incidunt delectus velit praesentium pariatur libero quibusdam numquam. Eligendi, natus blanditiis. Ipsum, cupiditate at sit doloremque suscipit sint, ad necessitatibus incidunt qui enim laudantium, quibusdam esse.</p>
+                            <p className='mt-3'><FontAwesomeIcon icon={faLocationDot} className='text-blue-600 me-3' />{item?.location}</p>
+                            <p className='mt-3'> Job Type: {item?.jType}</p>
+                            <p className='mt-3'> Salary: {item?.salary}</p>
+                            <p className='mt-3'> Qualification: {item?.qualification}</p>
+                            <p className='mt-3'> Experience: {item?.experience}</p>
+                            <p className='text-justify'>Description : {item?.description}</p>
                         </div>
                         <div className='flex md:justify-center items-start justify-end'>
                             <button onClick={()=>setModalStatus(true)} className='bg-blue-800 text-white px-5 py-2 border border-blue-800 hover:bg-white hover:text-blue-800 p-3 rounded ms-3 md:mt-0 mt-5'> Apply <FontAwesomeIcon icon={faSquareArrowUpRight} /></button>
@@ -41,6 +59,9 @@ function Careers() {
 
                     </div>
                 </div>
+                )):
+                <p>No Job Openings</p>
+                }
 
             </div>
 

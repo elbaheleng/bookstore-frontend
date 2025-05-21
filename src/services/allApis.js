@@ -20,6 +20,11 @@ export const googleLoginApi = async (reqBody) =>{
 export const homeBookApi = async() =>{
     return await commonApi('GET', `${serverurl}/all-home-book`)
 }
+
+//get all jobs
+export const getAllJobsApi = async(searchKey) =>{
+    return await commonApi('GET', `${serverurl}/all-jobs?search=${searchKey}`)
+}
 //--------------------------------------------------------------
 //user api
 
@@ -59,4 +64,9 @@ export const getAllUsersApi = async (reqHeader) =>{
 //api to add jobs
 export const addJobApi = async (reqBody) => {
     return await commonApi('POST', `${serverurl}/add-job`,reqBody)
+}
+
+//api to delete a job
+export const deleteJobApi = async (id) => {
+    return await commonApi('DELETE', `${serverurl}/delete-job/${id}`)
 }

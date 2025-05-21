@@ -20,10 +20,8 @@ function Viewbook() {
     //console.log(result);
     if (result.status == 200) {
       setViewBookDetails(result.data)
-      console.log(result.data);
-
+      //console.log(result.data);
     }
-
   }
 
   useEffect(() => {
