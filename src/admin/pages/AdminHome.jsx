@@ -6,9 +6,100 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBook, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { faUserTie } from '@fortawesome/free-solid-svg-icons/faUserTie'
 import { toast, ToastContainer } from 'react-toastify'
+import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 
 function AdminHome() {
+  const data = [
+    {
+      "name": "Page A",
+      "uv": 4000,
+      "pv": 2400
+    },
+    {
+      "name": "Page B",
+      "uv": 3000,
+      "pv": 1398
+    },
+    {
+      "name": "Page C",
+      "uv": 2000,
+      "pv": 9800
+    },
+    {
+      "name": "Page D",
+      "uv": 2780,
+      "pv": 3908
+    },
+    {
+      "name": "Page E",
+      "uv": 1890,
+      "pv": 4800
+    },
+    {
+      "name": "Page F",
+      "uv": 2390,
+      "pv": 3800
+    },
+    {
+      "name": "Page G",
+      "uv": 3490,
+      "pv": 4300
+    }
+  ]
+  const data01 = [
+    {
+      "name": "Group A",
+      "value": 400
+    },
+    {
+      "name": "Group B",
+      "value": 300
+    },
+    {
+      "name": "Group C",
+      "value": 300
+    },
+    {
+      "name": "Group D",
+      "value": 200
+    },
+    {
+      "name": "Group E",
+      "value": 278
+    },
+    {
+      "name": "Group F",
+      "value": 189
+    }
+  ];
+  const data02 = [
+    {
+      "name": "Group A",
+      "value": 2400
+    },
+    {
+      "name": "Group B",
+      "value": 4567
+    },
+    {
+      "name": "Group C",
+      "value": 1398
+    },
+    {
+      "name": "Group D",
+      "value": 9800
+    },
+    {
+      "name": "Group E",
+      "value": 3908
+    },
+    {
+      "name": "Group F",
+      "value": 4800
+    }
+  ]
+
   return (
     <>
       <HeaderAdmin />
@@ -46,7 +137,32 @@ function AdminHome() {
               </div>
             </div>
           </div>
+          <div className='md:grid grid-cols-2 mt-10'>
+            <div className='w-full h-80'>
+              <ResponsiveContainer width={"100%"} height={"100%"}>  {/* to make chart responsive wrt parent tag */}
+                <BarChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />  {/*grid using dashes 3px thick 3 px gap */}
+                  <XAxis dataKey="name" />  {/* displays label based on dataKey value */}
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="pv" fill="#8884d8" /> {/*dataKey value is taken to display the bar, color is given in fill */}
+                  <Bar dataKey="uv" fill="#82ca9d" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className='w-full h-80'>
+              <ResponsiveContainer width={"100%"} height={"100%"}>
+                <PieChart>
+                  <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" /> {/*cx,cy - to place horizontally and vertically center */}
+                  <Pie data={data02} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#82ca9d" label />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+          </div>
         </div>
+
       </div>
       <ToastContainer theme='colored' position='top-center' autoClose={2000} />
       <Footer />

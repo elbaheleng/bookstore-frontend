@@ -5,7 +5,10 @@ import SidebarAdmin from '../components/SidebarAdmin'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot, faSquareArrowUpRight, faTrashCan, faSquareXmark } from '@fortawesome/free-solid-svg-icons'
 import { toast, ToastContainer } from 'react-toastify'
-import { addJobApi, deleteJobApi, getAllJobsApi } from '../../services/allApis'
+import { addJobApi, deleteJobApi, getAllApplicationsApi, getAllJobsApi } from '../../services/allApis'
+import { Link } from 'react-router-dom'
+import { serverurl } from '../../services/serverurl'
+
 
 function AdminCareers() {
   const [jobpostStatus, setjobpostStatus] = useState(true)
@@ -23,6 +26,7 @@ function AdminCareers() {
   const [allJobs, setAllJobs] = useState([])
   const [addJobStatus, setaddJobStatus] = useState({})//used for add status and delete status
   const [searchKey, setSearchKey] = useState("")
+  const [allApplications, setAllApplications] = useState([])
   //console.log(jobPost);
   const handleReset = () => {
     setJobPost({
@@ -86,9 +90,28 @@ function AdminCareers() {
       toast.error("Something went wrong")
     }
   }
+
+  //to get all job applications
+  const getAllApplications = async () => {
+    const result = await getAllApplicationsApi()
+    //console.log(result);
+    if (result.status == 200) {
+      setAllApplications(result.data)
+    } else {
+      toast.error("Something went wrong")
+    }
+  }
+
+  //console.log(allApplications);
+  
   useEffect(() => {
+    if (jobpostStatus == true){
     getAllJobs(searchKey)
-  }, [addJobStatus, searchKey])
+    }
+    if (viewapplicantStatus == true){
+    getAllApplications()
+    }
+  }, [addJobStatus, searchKey, jobpostStatus,viewapplicantStatus])
   return (
     <>
       <HeaderAdmin />
@@ -198,7 +221,7 @@ function AdminCareers() {
                 </div>
               </div>
               <div className='overflow-x-auto'>
-                <table className='border border-gray-200 mx-auto'>
+                {allApplications?.length > 0 ? <table className='border border-gray-200 mx-auto'>
                   <thead>
                     <tr className='bg-blue-600 text-white font-medium'>
                       <th className="py-2 px-6 border-r border-gray-200">Sl.No.</th>
@@ -212,18 +235,20 @@ function AdminCareers() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className='border border-gray-200'>
-                      <th className="py-2 px-4 border-r border-gray-200">Sl.No.</th>
-                      <th className="py-2 px-4 border-r border-gray-200">Job Title</th>
-                      <th className="py-2 px-4 border-r border-gray-200">Name</th>
-                      <th className="py-2 px-4 border-r border-gray-200">Qualification</th>
-                      <th className="py-2 px-4 border-r border-gray-200">Email</th>
-                      <th className="py-2 px-4 border-r border-gray-200">Phone</th>
-                      <th className="py-2 px-4 border-r border-gray-200">Cover Letter</th>
-                      <th className="py-2 px-4">Resume</th>
-                    </tr>
+                    {allApplications?.map((item,index)=>(<tr className='border border-gray-200' key={index}>
+                      <th className="py-2 px-4 border-r border-gray-200">{index+1}</th>
+                      <th className="py-2 px-4 border-r border-gray-200">{item?.jobtitle}</th>
+                      <th className="py-2 px-4 border-r border-gray-200">{item?.fullname}</th>
+                      <th className="py-2 px-4 border-r border-gray-200">{item?.qualification}</th>
+                      <th className="py-2 px-4 border-r border-gray-200">{item?.email}</th>
+                      <th className="py-2 px-4 border-r border-gray-200">{item?.phone}</th>
+                      <th className="py-2 px-4 border-r border-gray-200">{item?.coverletter}</th>
+                      <th className="py-2 px-4"><Link to={`${serverurl}/pdfupload/${item?.resume}`} target='_blank' className='text-blue-600'>Resume</Link></th>
+                    </tr>))}
                   </tbody>
-                </table>
+                </table> : 
+                <p>No Applicants</p>
+                }
               </div>
             </div>
           }
