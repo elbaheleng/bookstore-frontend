@@ -1,10 +1,17 @@
 import React from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons'
+import { useNavigate } from 'react-router-dom'
 
 
 
 function HeaderAdmin() {
+  const navigate = useNavigate()
+  const logout = () => {
+    sessionStorage.removeItem("existingUser")
+    sessionStorage.removeItem("token")
+    navigate("/")
+  }
   return (
     <>
       <div className='flex justify-between md:px-20 px-5 my-2'>
@@ -13,7 +20,7 @@ function HeaderAdmin() {
           <h1 className='text-2xl font-bold ms-2'>BOOKSTORE</h1>
         </div>
         <div className='px-4 py-3 border border-black rounded hover:bg-black hover:text-white'>
-          <button ><FontAwesomeIcon icon={faPowerOff} className='me-2' />Logout</button>
+          <button onClick={logout} ><FontAwesomeIcon icon={faPowerOff} className='me-2' />Logout</button>
         </div>
       </div>
       <marquee behavior="" className='mb-0 p-3 bg-gray-900 text-white' direction="left">

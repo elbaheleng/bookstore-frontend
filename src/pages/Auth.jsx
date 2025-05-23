@@ -56,7 +56,7 @@ function Auth({ register }) {
       toast.error("Pls fill all the fields.")
     } else {
       const result = await loginApi({ email, password })
-      console.log(result);
+      //console.log(result);
       if (result.status == 200) {
         toast.success("Login Successful")
         sessionStorage.setItem("existingUser", JSON.stringify(result.data.existingUser))

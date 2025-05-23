@@ -91,8 +91,8 @@ function Home() {
           <p className='text-center mb-5'>Explore Our Latest Collection</p>
           <div className='md:grid grid-cols-4 w-full gap-15'>
             {homeBook?.length > 0 ?
-              homeBook?.map((item) => (
-                <div className='p-3 shadow-md'>
+              homeBook?.map((item,index) => (
+                <div className='p-3 shadow-md' key={index}>
                   <img src={item?.imageurl} alt="book image" style={{ width: '100%', height: "250px" }} />
                   <div className='flex justify-center items-center mt-3 flex-col'>
                     <p className='text-blue-700'>{item?.author}</p>

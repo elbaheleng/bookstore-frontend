@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBook, faGear, faHouse, faShoppingBag, faBars } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
+import { serverurl } from '../../services/serverurl'
+import { adminProfileUpdateStatusContext } from '../../context/Contexttoshare'
+
 
 
 
@@ -11,6 +14,11 @@ function SidebarAdmin() {
     const [CareersStatus, setCareerStatus] = useState(false)
     const [SettingsStatus, setSettingsStatus] = useState(false)
     const [SidebarStatus, setSidebarsStatus] = useState(false)
+    const [adminD, setAdminD] = useState({
+        username:"",
+        profile:""
+    })
+    const {adminProfileUpdateStatus} = useContext(adminProfileUpdateStatusContext)
     
 
     const navigate = useNavigate()
@@ -50,13 +58,17 @@ function SidebarAdmin() {
         else {
             console.log('Page not found');
         }
-    }, [])
+
+        const user = JSON.parse(sessionStorage.getItem("existingUser"))
+        setAdminD({username:user.username, profile:user.profile})
+
+    }, [adminProfileUpdateStatus])
     return (
         <>
             <div>
                 <div className='flex flex-col justify-center items-center'>
-                    <img src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="no image" style={{ height: "150px", width: "150px" }} />
-                    <h3 className='text-xl mt-5'>Username</h3>
+                    <img src={adminD.profile == ""? "https://cdn-icons-png.freepik.com/512/8742/8742495.png" : `${serverurl}/upload/${adminD.profile}`} alt="no image" style={{ height: "150px", width: "150px", borderRadius:"50%" }} />
+                    <h3 className='text-xl mt-5'>{adminD.username}</h3>
                     <div className='md:hidden'><FontAwesomeIcon onClick={()=>setSidebarsStatus(!SidebarStatus)} icon={faBars} className='fa-2x mt-3 text-blue-600 ' /></div>
                 </div>
                 <div className={SidebarStatus ?'my-5':'my-5 hidden md:block'}>

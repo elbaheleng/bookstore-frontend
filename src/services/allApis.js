@@ -79,3 +79,7 @@ export const deleteJobApi = async (id) => {
 export const getAllApplicationsApi = async() =>{
     return await commonApi('GET', `${serverurl}/all-applications`)
 }
+//api to update the profile
+export const updateProfileApi = async (reqBody, reqHeader) =>{
+    return await commonApi('PUT', `${serverurl}/admin-profile-update`,reqBody, reqHeader)
+}
