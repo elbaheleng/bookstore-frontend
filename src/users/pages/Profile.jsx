@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleCheck, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import EditProfile from '../components/EditProfile'
 import { toast, ToastContainer } from 'react-toastify'
-import { uploadBookApi } from '../../services/allApis'
+import { deleteBookApi, getAllBooksAddedByUserApi, getAllBooksBoughtByUserApi, uploadBookApi } from '../../services/allApis'
 
 
 
@@ -19,6 +19,18 @@ function Profile() {
   const [preview, setPreview] = useState("")
   const [previewList, setPreviewList] = useState([])
   const [token, setToken] = useState('')
+  const [userDetails, setUserDetails] = useState({
+    username: "",
+    password: "",
+    bio: "",
+    profile: ""
+  })
+  const [existingProfile, setExistingProfile] = useState("")
+  const [booksAdded, setBooksAdded] = useState([])
+  const [booksBought, setBooksBought] = useState([])
+  const [deleteBookStatus, setDeleteBookStatus] = useState({})
+
+
 
   //console.log(bookDetails);
   const handleUpload = (e) => {
@@ -52,37 +64,85 @@ function Profile() {
         "Authorization": `Bearer ${token}`
       }
       const reqBody = new FormData()
-      for (let key in bookDetails){
-        if (key != 'uploadedImages'){
-        reqBody.append(key, bookDetails[key])
+      for (let key in bookDetails) {
+        if (key != 'uploadedImages') {
+          reqBody.append(key, bookDetails[key])
         } else {
           bookDetails.uploadedImages.forEach((item) => {
             reqBody.append("uploadedImages", item)
           })
         }
       }
-      const result = await uploadBookApi(reqBody,reqHeader)
+      const result = await uploadBookApi(reqBody, reqHeader)
       console.log(result);
-      if(result.status == 200){
+      if (result.status == 200) {
         toast.success("Book added successfully")
         handleReset()
-      } 
-      else if(result.status == 401){
+      }
+      else if (result.status == 401) {
         toast.warning(result.response.data)
         handleReset()
       } else {
         toast.error("Something went wrong")
         handleReset()
       }
-      
+
+    }
+  }
+
+  const getBooksAddedByUser = async () => {
+    const reqHeader = {
+      "Authorization": `Bearer ${token}`
+    }
+    const result = await getAllBooksAddedByUserApi(reqHeader)
+    if (result.status == 200) {
+      //console.log(result.data);
+      setBooksAdded(result.data)
+    } else {
+      toast.error("Something went wrong")
+    }
+  }
+
+  const getBooksBoughtByUser = async () => {
+    const reqHeader = {
+      "Authorization": `Bearer ${token}`
+    }
+    const result = await getAllBooksBoughtByUserApi(reqHeader)
+    if (result.status == 200) {
+      //console.log(result.data);
+      setBooksBought(result.data);
+    } else {
+      toast.error("Something went wrong")
+    }
+  }
+  //console.log(booksAdded);
+  //function to delete a book
+  const handleDeleteBook = async (id) => {
+    const result = await deleteBookApi(id)
+    if (result.status == 200) {
+      //console.log(result);
+      setDeleteBookStatus(result.data)
+    } else {
+      toast.error("Something went wrong")
     }
   }
 
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
       setToken(sessionStorage.getItem("token"))
+      const user = JSON.parse(sessionStorage.getItem("existingUser"))
+      setUserDetails({ username: user.username, password: user.password, bio: user.bio })
+      setExistingProfile(user.profile)
+      if (bookstatus == true) {
+        getBooksAddedByUser()
+      }
+      else if (purchaseStatus == true) {
+        getBooksBoughtByUser()
+      } else {
+        console.log("Something went wrong");
+      }
     }
-  }, [])
+  }, [bookstatus, purchaseStatus, deleteBookStatus])
 
   return (
     <>
@@ -92,7 +152,7 @@ function Profile() {
       <div><img className='rounded-full border-10 border-white' style={{ height: '200px', width: '200px', marginTop: "-100px", marginLeft: "40px" }} src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="" /></div>
 
       <div className="md:flex justify-between px-14">
-        <p className='md:text-3xl text-2xl'>Elba Helen George <span className='ms-3 text-blue-400 text-xl'><FontAwesomeIcon icon={faCircleCheck} /></span></p>
+        <p className='md:text-3xl text-2xl'>{userDetails.username} <span className='ms-3 text-blue-400 text-xl'><FontAwesomeIcon icon={faCircleCheck} /></span></p>
         <EditProfile />
       </div>
       <p className='md:px-20 px-5 my-5 text-justify'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo voluptatem at a quis magnam quos? Iste voluptatibus maxime consequatur explicabo nihil at doloribus a accusantium alias ratione! Nobis, voluptate dolorem!</p>
@@ -172,23 +232,23 @@ function Profile() {
 
         {bookstatus &&
           <div className='p-10 my-20 shadow rounded'>
-            <div className='bg-gray-200 p-4 rounded'>
+            {booksAdded?.length > 0 ? booksAdded?.map((item, index) => (<div className='bg-gray-200 p-4 rounded mb-5' key={index}>
               <div className='md:grid grid-cols-[3fr_1fr] gap-10'>
                 <div>
-                  <h1 className='text-3xl'>Harry Potter</h1>
-                  <h2>J K Rowling</h2>
-                  <h3 className='text-blue-600'> $ 13</h3>
-                  <p className='text-justify'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga ad repudiandae accusantium provident harum neque iusto dolorum doloremque tenetur, suscipit, qui laudantium delectus, est ut itaque laborum a. In, exercitationem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores officia incidunt laboriosam iusto sint deleniti accusantium quam enim eveniet iste amet reprehenderit minima, autem pariatur repellat dolore quis consequuntur error. Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt velit sequi aliquam tempora modi illum, praesentium, perferendis dolor, sed provident nobis? Ex iusto aliquam libero sunt repellendus id obcaecati ullam.</p>
+                  <h1 className='text-3xl'>{item?.title}</h1>
+                  <h2>{item?.author}</h2>
+                  <h3 className='text-blue-600'> $ {item?.dprice}</h3>
+                  <p className='text-justify'>{item?.abstract}</p>
                   <div className='flex'>
-                    <img src="https://www.culvereq.com/wp-content/uploads/2024/11/PENDING-STAMP.png" alt="no image" style={{ height: "60px" }} />
-                    <img src="https://png.pngtree.com/png-vector/20230604/ourmid/pngtree-approved-stamp-with-green-color-vector-png-image_7120039.png" alt="no image" style={{ height: "60px" }} />
-                    <img src="https://static.vecteezy.com/system/resources/thumbnails/021/433/029/small_2x/sold-rubber-stamp-free-png.png" alt="no image" style={{ height: "60px" }} />
+                    {item?.status == 'pending' ? <img src="https://www.culvereq.com/wp-content/uploads/2024/11/PENDING-STAMP.png" alt="no image" style={{ height: "60px" }} /> :
+                      item?.status == 'approved' ? <img src="https://png.pngtree.com/png-vector/20230604/ourmid/pngtree-approved-stamp-with-green-color-vector-png-image_7120039.png" alt="no image" style={{ height: "60px" }} /> :
+                        <img src="https://static.vecteezy.com/system/resources/thumbnails/021/433/029/small_2x/sold-rubber-stamp-free-png.png" alt="no image" style={{ height: "60px" }} />}
                   </div>
                 </div>
                 <div>
-                  <img className='w-full' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNJqtU6OsrfptDb8ZfEWiyNppWsJiMGXFTygF9mGy9axlV_-tXKHfHPKIZIHWM1sM352Q&usqp=CAU" alt="no image" />
+                  <img className='w-full' src={item?.imageurl} alt="no image" />
                   <div className='flex justify-end mt-4'>
-                    <button className='bg-red-600 text-white px-3 py-2 hover:bg-gray-200 hover:text-red-600 hover:border hover:border-red-600 rounded'>
+                    <button type='button' onClick={() => handleDeleteBook(item?._id)} className='bg-red-600 text-white px-3 py-2 hover:bg-gray-200 hover:text-red-600 hover:border hover:border-red-600 rounded'>
                       Delete
                     </button>
                   </div>
@@ -196,42 +256,39 @@ function Profile() {
 
               </div>
 
-            </div>
+            </div>)) :
 
-            <div className='flex justify-center items-center flex-col'>
-              <img src="https://i.pinimg.com/originals/b4/13/34/b41334a036d6796c281a6e5cbb36e4b5.gif" style={{ height: "300px" }} alt="no image" />
-              <p className='text-red-600 text-2xl'>No books added yet.</p>
-            </div>
+              <div className='flex justify-center items-center flex-col'>
+                <img src="https://i.pinimg.com/originals/b4/13/34/b41334a036d6796c281a6e5cbb36e4b5.gif" style={{ height: "300px" }} alt="no image" />
+                <p className='text-red-600 text-2xl'>No books added yet.</p>
+              </div>}
           </div>}
 
 
 
         {purchaseStatus && <div>
-          <div className='bg-gray-200 p-4 rounded'>
+          {booksBought?.length > 0 ? booksBought?.map((item, index) => (<div className='bg-gray-200 p-4 rounded mb-5' key={index}>
             <div className='md:grid grid-cols-[3fr_1fr] gap-10'>
               <div>
-                <h1 className='text-3xl'>Harry Potter</h1>
-                <h2>J K Rowling</h2>
-                <h3 className='text-blue-600'> $ 13</h3>
-                <p className='text-justify'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga ad repudiandae accusantium provident harum neque iusto dolorum doloremque tenetur, suscipit, qui laudantium delectus, est ut itaque laborum a. In, exercitationem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores officia incidunt laboriosam iusto sint deleniti accusantium quam enim eveniet iste amet reprehenderit minima, autem pariatur repellat dolore quis consequuntur error. Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt velit sequi aliquam tempora modi illum, praesentium, perferendis dolor, sed provident nobis? Ex iusto aliquam libero sunt repellendus id obcaecati ullam.</p>
+                <h1 className='text-3xl'>{item?.title}</h1>
+                <h2>{item?.author}</h2>
+                <h3 className='text-blue-600'> $ {item?.dprice}</h3>
+                <p className='text-justify'>{item?.abstract}</p>
               </div>
               <div>
-                <img className='w-full' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNJqtU6OsrfptDb8ZfEWiyNppWsJiMGXFTygF9mGy9axlV_-tXKHfHPKIZIHWM1sM352Q&usqp=CAU" alt="no image" />
+                <img className='w-full' src={item?.imageurl} alt="no image" />
 
               </div>
 
             </div>
 
-          </div>
+          </div>)) :
 
-          <div className='flex justify-center items-center flex-col'>
-            <img src="https://i.pinimg.com/originals/b4/13/34/b41334a036d6796c281a6e5cbb36e4b5.gif" style={{ height: "300px" }} alt="no image" />
-            <p className='text-red-600 text-2xl'>No books purchased yet.</p>
-          </div>
+            <div className='flex justify-center items-center flex-col mb-5'>
+              <img src="https://i.pinimg.com/originals/b4/13/34/b41334a036d6796c281a6e5cbb36e4b5.gif" style={{ height: "300px" }} alt="no image" />
+              <p className='text-red-600 text-2xl'>No books purchased yet.</p>
+            </div>}
         </div>}
-
-
-
       </div>
       <ToastContainer theme='colored' position='top-center' autoClose={2000} />
       <Footer />

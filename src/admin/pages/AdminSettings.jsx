@@ -5,7 +5,7 @@ import SidebarAdmin from '../components/SidebarAdmin'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { toast, ToastContainer } from 'react-toastify'
-import { updateProfileApi } from '../../services/allApis'
+import { updateAdminProfileApi } from '../../services/allApis'
 import { serverurl } from '../../services/serverurl'
 import { adminProfileUpdateStatusContext } from '../../context/Contexttoshare'
 
@@ -20,8 +20,8 @@ function AdminSettings() {
   const [preview, setPreview] = useState("")
   const [token, setToken] = useState('')
   const [existingProfile, setExistingProfile] = useState("")
-    const [updateStatus, setUpdateStatus] = useState({})
-    const {setAdminProfileUpdateStatus} = useContext(adminProfileUpdateStatusContext)
+  const [updateStatus, setUpdateStatus] = useState({})
+  const {setAdminProfileUpdateStatus} = useContext(adminProfileUpdateStatusContext)
 
 
   // console.log(adminDetails);
@@ -61,7 +61,7 @@ function AdminSettings() {
           const reqHeader = {
             "Authorization": `Bearer ${token}`
           }
-          const result = await updateProfileApi(reqBody, reqHeader)
+          const result = await updateAdminProfileApi(reqBody, reqHeader)
           //console.log(result);
           if(result.status == 200){
             toast.success("Profile updated successfully")
@@ -78,7 +78,7 @@ function AdminSettings() {
           const reqHeader = {
             "Authorization": `Bearer ${token}`
           }
-          const result = await updateProfileApi({ username, password, profile: existingProfile }, reqHeader)
+          const result = await updateAdminProfileApi({ username, password, profile: existingProfile }, reqHeader)
           //console.log(result);
           if(result.status == 200){
             toast.success("Profile updated successfully")

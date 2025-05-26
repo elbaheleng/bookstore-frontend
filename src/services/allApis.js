@@ -49,6 +49,26 @@ export const addApplicationApi = async (reqBody,reqHeader) =>{
         return await commonApi('POST', `${serverurl}/apply-job`,reqBody, reqHeader)
 }
 
+//api to update the user profile
+export const updateUserProfileApi = async (reqBody, reqHeader) =>{
+    return await commonApi('PUT', `${serverurl}/user-profile-update`,reqBody, reqHeader)
+}
+//to get all books added by user
+export const getAllBooksAddedByUserApi = async(reqHeader) =>{
+    return await commonApi('GET',`${serverurl}/all-books-added-by-user`,'',reqHeader)
+}
+//to get all books bought by user
+export const getAllBooksBoughtByUserApi = async(reqHeader) =>{
+    return await commonApi('GET',`${serverurl}/all-books-bought-by-user`,'',reqHeader)
+}
+//to delete a book
+export const deleteBookApi = async (id) => {
+    return await commonApi('DELETE', `${serverurl}/delete-book/${id}`)
+}
+//make payment
+export const makePaymentApi = async(reqBody, reqHeader) =>{
+    return await commonApi('PUT',`${serverurl}/make-payment`,reqBody,reqHeader)
+}
 //--------------------------------------------------------------
 //admin api
 
@@ -79,7 +99,7 @@ export const deleteJobApi = async (id) => {
 export const getAllApplicationsApi = async() =>{
     return await commonApi('GET', `${serverurl}/all-applications`)
 }
-//api to update the profile
-export const updateProfileApi = async (reqBody, reqHeader) =>{
+//api to update the admin profile
+export const updateAdminProfileApi = async (reqBody, reqHeader) =>{
     return await commonApi('PUT', `${serverurl}/admin-profile-update`,reqBody, reqHeader)
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { viewABookApi } from '../../services/allApis'
+import { makePaymentApi, viewABookApi } from '../../services/allApis'
 import { useParams } from 'react-router-dom'
 import { faBackward, faEye, faSquareArrowUpRight, faSquareXmark } from '@fortawesome/free-solid-svg-icons'
 import { serverurl } from '../../services/serverurl'
@@ -7,11 +7,14 @@ import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom'
+import { loadStripe } from '@stripe/stripe-js';
 
 function Viewbook() {
   const [modalStatus, setModalStatus] = useState(false)
 
   const [viewBookDetails, setViewBookDetails] = useState({})
+  const [token, setToken] = useState('')
+
   const { id } = useParams()
   //console.log(id);
 
@@ -23,9 +26,26 @@ function Viewbook() {
       //console.log(result.data);
     }
   }
+  //function to make payment
+  const makePayment = async () => {
+    console.log(viewBookDetails);
+    const stripe = await loadStripe('pk_test_51RSxyzBByBIEVjlsKUp0WGaiAhe5fl3V3io37VKDQNUn9Fq1B5FN52qMMnxFtaQ8kglH8Rj9YMIHQEr0JwrWiPCR00y40A47Kq');
+    const reqBody = {
+      booksDetails: viewBookDetails
+    }
+    const reqHeader = {
+      "Authorization": `Bearer ${token}`
+    }
+    const result = makePaymentApi(reqBody,reqHeader)
+    console.log(result);
+    
+  }
 
   useEffect(() => {
     viewBook(id)
+     if (sessionStorage.getItem("token")) {
+      setToken(sessionStorage.getItem("token"))
+     }
   }, [])
   return (
     <>
@@ -36,7 +56,7 @@ function Viewbook() {
             <img className='p-10' src={viewBookDetails?.imageurl} height={"200px"} alt="no image" />
           </div>
           <div>
-            <div className='text-end'><FontAwesomeIcon  onClick={() => setModalStatus(true)} className='text-gray-600 pe-5' icon={faEye} /></div>
+            <div className='text-end'><FontAwesomeIcon onClick={() => setModalStatus(true)} className='text-gray-600 pe-5' icon={faEye} /></div>
             <div className='text-center'>
               <h1 className='text-3xl'>{viewBookDetails?.title}</h1>
               <p className='text-blue-700'>{viewBookDetails?.author}</p>
@@ -55,13 +75,13 @@ function Viewbook() {
                 <p className='mb-3'>ISBN:{viewBookDetails?.isbn}</p>
               </div>
             </div>
-             <div>
-                <p className='mx-5 px-5 md:m-5 md:p-5 text-justify'>{viewBookDetails?.abstract}</p>
-              </div>
-              <div className='flex mb-5 me-5 justify-center md:justify-end'>
-                <Link to={'/all-Books'} ><button className='bg-blue-800 text-white px-5 py-2 border border-blue-800 hover:bg-white hover:text-blue-800 p-3 rounded ms-3 md:mt-0 mt-5 mb-3'> Back <FontAwesomeIcon icon={faBackward} /></button></Link>
-                <button className='bg-green-800 text-white px-5 py-2 border border-green-800 hover:bg-white hover:text-green-800 p-3 rounded ms-3 md:mt-0 mt-5 mb-3'> Buy ${viewBookDetails?.dprice}</button>
-              </div>
+            <div>
+              <p className='mx-5 px-5 md:m-5 md:p-5 text-justify'>{viewBookDetails?.abstract}</p>
+            </div>
+            <div className='flex mb-5 me-5 justify-center md:justify-end'>
+              <Link to={'/all-Books'} ><button className='bg-blue-800 text-white px-5 py-2 border border-blue-800 hover:bg-white hover:text-blue-800 p-3 rounded ms-3 md:mt-0 mt-5 mb-3'> Back <FontAwesomeIcon icon={faBackward} /></button></Link>
+              <button type='button' onClick={makePayment} className='bg-green-800 text-white px-5 py-2 border border-green-800 hover:bg-white hover:text-green-800 p-3 rounded ms-3 md:mt-0 mt-5 mb-3'> Buy ${viewBookDetails?.dprice}</button>
+            </div>
           </div>
 
         </div>
