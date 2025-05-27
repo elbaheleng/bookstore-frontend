@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../../components/Footer'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -6,6 +6,9 @@ import { faCircleCheck, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import EditProfile from '../components/EditProfile'
 import { toast, ToastContainer } from 'react-toastify'
 import { deleteBookApi, getAllBooksAddedByUserApi, getAllBooksBoughtByUserApi, uploadBookApi } from '../../services/allApis'
+import { userProfileUpdateStatusContext } from '../../context/Contexttoshare'
+import { serverurl } from '../../services/serverurl'
+
 
 
 
@@ -29,6 +32,8 @@ function Profile() {
   const [booksAdded, setBooksAdded] = useState([])
   const [booksBought, setBooksBought] = useState([])
   const [deleteBookStatus, setDeleteBookStatus] = useState({})
+    const {userProfileUpdateStatus} = useContext(userProfileUpdateStatusContext) 
+  
 
 
 
@@ -142,18 +147,20 @@ function Profile() {
         console.log("Something went wrong");
       }
     }
-  }, [bookstatus, purchaseStatus, deleteBookStatus])
+  }, [bookstatus, purchaseStatus, deleteBookStatus,userProfileUpdateStatus])
 
   return (
     <>
       <Header />
       <div className='bg-gray-900 h-32'>
       </div>
-      <div><img className='rounded-full border-10 border-white' style={{ height: '200px', width: '200px', marginTop: "-100px", marginLeft: "40px" }} src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="" /></div>
+      <div>
+        { existingProfile == "" ? <img className='rounded-full border-10 border-white bg-white' style={{ height: '200px', width: '200px', marginTop: "-100px", marginLeft: "40px" }} src="https://cdn-icons-png.freepik.com/512/8742/8742495.png" alt="" /> : existingProfile.startsWith("http") ? <img className='rounded-full border-10 border-white  bg-white' style={{ height: '200px', width: '200px', marginTop: "-100px", marginLeft: "40px" }} src= {existingProfile} alt="" />  : <img className='rounded-full border-10 border-white  bg-white' style={{ height: '200px', width: '200px', marginTop: "-100px", marginLeft: "40px" }} src= {`${serverurl}/upload/${existingProfile}`} alt="" /> }
+        </div>
 
       <div className="md:flex justify-between px-14">
         <p className='md:text-3xl text-2xl'>{userDetails.username} <span className='ms-3 text-blue-400 text-xl'><FontAwesomeIcon icon={faCircleCheck} /></span></p>
-        <EditProfile />
+        <div><EditProfile /></div>
       </div>
       <p className='md:px-20 px-5 my-5 text-justify'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo voluptatem at a quis magnam quos? Iste voluptatibus maxime consequatur explicabo nihil at doloribus a accusantium alias ratione! Nobis, voluptate dolorem!</p>
 

@@ -3,6 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPenToSquare, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { updateUserProfileApi } from '../../services/allApis'
 import { userProfileUpdateStatusContext } from '../../context/Contexttoshare'
+import { serverurl } from '../../services/serverurl'
+import { toast, ToastContainer } from 'react-toastify'
+
+
 
 function EditProfile() {
   const [offcanvasStatus, setoffcanvasStatus] = useState(false)
@@ -29,6 +33,14 @@ function EditProfile() {
   }
 
   //console.log(userDetails);
+  const handleReset = () =>{
+    if (sessionStorage.getItem("token")) {
+      const user = JSON.parse(sessionStorage.getItem("existingUser"))
+      setUserDetails({ username: user.username, password: user.password, cpassword: user.password, bio : user.bio})
+      setExistingProfile(user.profile)
+    }
+    setPreview("")
+  }
 
   const handleUpdate = async () => {
     const { username, password, cpassword, bio, profile } = userDetails
@@ -53,7 +65,8 @@ function EditProfile() {
             toast.success("Profile updated successfully")
             sessionStorage.setItem("existingUser", JSON.stringify(result.data))
             // setUpdateStatus(result.data)
-            // setAdminProfileUpdateStatus(result.data)
+            setUserProfileUpdateStatus(result.data)
+            setoffcanvasStatus(false)
           } else {
             toast.success("Something went wrong")
             // setUpdateStatus(result)
@@ -70,7 +83,8 @@ function EditProfile() {
             toast.success("Profile updated successfully")
             sessionStorage.setItem("existingUser", JSON.stringify(result.data))
             // setUpdateStatus(result.data)
-            // setAdminProfileUpdateStatus(result.data)
+            setUserProfileUpdateStatus(result.data)
+            setoffcanvasStatus(false)
 
           } else {
             toast.success("Something went wrong")
@@ -128,13 +142,15 @@ function EditProfile() {
             </div>
 
             <div className="flex justify-end w-full px-5 mt-5">
-              <button className='bg-amber-600 text-black rounded px-3 py-2 hover:border hover:border-amber-600 hover:bg-white hover:text-amber-700'>Reset</button>
+              <button onClick={handleReset} className='bg-amber-600 text-black rounded px-3 py-2 hover:border hover:border-amber-600 hover:bg-white hover:text-amber-700'>Reset</button>
               <button onClick={handleUpdate} className='bg-green-600 text-white rounded px-3 py-2 hover:border hover:border-green-600 hover:bg-white hover:text-green-700 ms-4'>Update</button>
             </div>
 
           </div>
         </div>
       </div>}
+      <ToastContainer theme='colored' position='top-center' autoClose={2000} />
+      
     </>
   )
 }

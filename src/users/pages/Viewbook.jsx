@@ -8,6 +8,7 @@ import Footer from '../../components/Footer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js';
+import { toast,ToastContainer } from 'react-toastify'
 
 function Viewbook() {
   const [modalStatus, setModalStatus] = useState(false)
@@ -36,8 +37,17 @@ function Viewbook() {
     const reqHeader = {
       "Authorization": `Bearer ${token}`
     }
-    const result = makePaymentApi(reqBody,reqHeader)
+    const result = await makePaymentApi(reqBody,reqHeader)
     console.log(result);
+    //console.log(result.data.existingBook);
+    const sessionId = result.data.sessionId
+    const reponse = stripe.redirectToCheckout({
+      sessionId: sessionId
+    })
+    if(reponse.error){
+      toast.error("Something went wrong")
+    }
+    
     
   }
 
@@ -113,6 +123,8 @@ function Viewbook() {
         </div>
       </div>}
       <Footer />
+          <ToastContainer theme='colored' position='top-center' autoClose={2000} />
+
     </>
   )
 }
